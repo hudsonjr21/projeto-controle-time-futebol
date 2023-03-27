@@ -1,11 +1,33 @@
+import { UserToken } from './models/UserToken';
+import { UserPayload } from './models/UserPayload';
 import { UserService } from './../user/user.service';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedError } from './erros/unauthorized.error';
+import { User } from 'src/user/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UserService) {}
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly userService: UserService,
+        ) {}
+
+    login(user: User) : UserToken {
+        // transforma o user em um JWT
+        const payload: UserPayload = {
+            sub: user.id,
+            email: user.email,
+            name: user.name,
+          };
+
+          const jwtToken = this.jwtService.sign(payload);
+
+          return{
+            access_token: jwtToken,
+          }
+    }
 
     async validateUser(email: string, password: string) {
         const user = await this.userService.findByEmail(email);
