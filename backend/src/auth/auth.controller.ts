@@ -8,7 +8,7 @@ import { IsPublic } from './decorators/is-public.decorator';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @IsPublic()
+    @IsPublic() //deixar publico o acesso do login, para gerar o token e assim autenticar o login
     @Post('login')
     @HttpCode(HttpStatus.OK)
     @UseGuards(LocalAuthGuard)
